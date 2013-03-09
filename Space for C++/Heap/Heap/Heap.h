@@ -18,15 +18,17 @@ public:
 	void printHeap(BinaryTreeNode<T>* currentNode);
 	BinaryTreeNode<T>* getRoot() const;
 	T removeHead();
-	BinaryTreeNode<T>* getLastLeaf() const;
+	void insert(T value);
+	BinaryTreeNode<T>* getLastLeaf() const;//return the rightmost leaf
 	~Heap(void);
 
 private:
 	BinaryTreeNode<T>* root;
 	int size;
-	void releaseNode(BinaryTreeNode<T>*);
+	void releaseNodes(BinaryTreeNode<T>*);
 	void deleteNode(BinaryTreeNode<T>*);
 	void siftDown(BinaryTreeNode<T>*);
+	void floatUp(BinaryTreeNode<T>*);
 };
 
 #endif

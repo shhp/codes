@@ -9,17 +9,26 @@
 using namespace std;
 
 
+template<class T>
+void swapValue(T& variable1, T& variable2)
+{
+	T temp = variable1;
+	variable1 = variable2;
+	variable2 = temp;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int values[] = {0,50,5,3,4,2};
-	Heap<int> heap(values,5);
-    heap.removeHead();
-	heap.removeHead();
-	heap.removeHead();
-	heap.removeHead();
-	heap.removeHead();
-	heap.removeHead();
-	cout << "After removing head, heap is: ";
+	int values[] = {0,50,4,3,2};
+	Heap<int> heap(values,4);
+    //heap.removeHead();
+	//heap.removeHead();	
+	//heap.insert(2);
+	//heap.insert(3);
+	//heap.insert(50);
+	//heap.insert(4);
+	heap.insert(52);
+	cout << "After operating, heap is: ";
 	heap.printHeap(heap.getRoot());
 	//cout << heap.getLastLeaf()->value;
 
@@ -54,7 +63,7 @@ Heap<T>::Heap(T values[],int size)
 	}
 
 	this->size = size;
-	this->root = nodes[1];
+	this->root = size > 0 ? nodes[1] : NULL;
 
 	delete[] nodes;
 }
@@ -104,6 +113,43 @@ T Heap<T>::removeHead()
 }
 
 template<class T>
+void Heap<T>::insert(T value)
+{
+	BinaryTreeNode<T>* insertNodeParent = root;// insertNodeParent is the parent of the new node
+
+	/* Find the insertNodeParent whose index should be (size+1)/2 in breadth first search */
+	Queue<BinaryTreeNode<T>*> queue(this->size);
+	queue.addElement(root);
+	int count = 0;
+	while(!queue.isEmpty())
+	{
+		BinaryTreeNode<T>* node = queue.removeHead();
+		count++;
+		if(count == (size+1)/2)
+		{
+			insertNodeParent = node;
+			break;
+		}
+
+		if(node->leftChild != NULL) queue.addElement(node->leftChild);
+		if(node->rightChild != NULL) queue.addElement(node->rightChild);
+	}
+
+	BinaryTreeNode<T>* newNode = new BinaryTreeNode<T>(value,insertNodeParent);
+	if(insertNodeParent == NULL)
+	{
+		root = newNode;
+	}
+	else
+	{
+		insertNodeParent->leftChild == NULL ? insertNodeParent->leftChild = newNode : insertNodeParent->rightChild = newNode;
+	}
+	
+	floatUp(newNode);
+	size++;
+}
+
+template<class T>
 void Heap<T>::siftDown(BinaryTreeNode<T>* node)
 {
 	if(node != NULL)
@@ -117,12 +163,36 @@ void Heap<T>::siftDown(BinaryTreeNode<T>* node)
 
 			if(child->value > parent->value)
 			{
-				int temp = parent->value;
+				/*int temp = parent->value;
 				parent->value = child->value;
-				child->value = temp;
+				child->value = temp;*/
+				swapValue(parent->value, child->value);
 
 				parent = child;
 				child = parent->leftChild;
+			}
+			else
+				break;
+		}
+
+	}
+}
+
+template<class T>
+void Heap<T>::floatUp(BinaryTreeNode<T>* node)
+{
+	if(node != NULL)
+	{
+		BinaryTreeNode<T>* parent = node->parent;
+		BinaryTreeNode<T>* child = node;
+		while(parent != NULL)
+		{			
+			if(child->value > parent->value)
+			{				
+				swapValue(parent->value, child->value);
+
+				child = parent;
+				parent = parent->parent;				
 			}
 			else
 				break;
@@ -171,16 +241,16 @@ BinaryTreeNode<T>* Heap<T>::getLastLeaf() const
 template<class T>
 Heap<T>::~Heap(void)
 {
-	releaseNode(root);
+	releaseNodes(root);
 }
 
 template<class T>
-void Heap<T>::releaseNode(BinaryTreeNode<T>* currentNode)
+void Heap<T>::releaseNodes(BinaryTreeNode<T>* currentNode)
 {
 	if(currentNode != NULL)
 	{		
-		releaseNode(currentNode->leftChild);
-		releaseNode(currentNode->rightChild);
+		releaseNodes(currentNode->leftChild);
+		releaseNodes(currentNode->rightChild);
 		delete currentNode;
 	}
 }
