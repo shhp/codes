@@ -10,8 +10,8 @@
 * qar 
 * You are also given a collection of letters. E.g., {a, e, f, f, g, i, r, q}. 
 * The task is to find the longest word in the dictionary that can be spelled with the collection of 
-* letters. For example, the correct answer for the example values above is ¡°giraffe¡±. (Note that 
-* ¡°reef¡± is not a possible answer, because the set of letters contains only one ¡°e¡±.)
+* letters. For example, the correct answer for the example values above is "giraffe". (Note that 
+* "eef" is not a possible answer, because the set of letters contains only one "e".)
 */
 
 import java.io.*;
